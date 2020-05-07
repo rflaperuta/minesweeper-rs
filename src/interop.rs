@@ -2,7 +2,7 @@ use crate::windows::{
     system::DispatcherQueueController, ui::composition::desktop::DesktopWindowTarget,
 };
 use std::ffi::c_void;
-use winrt::RuntimeType;
+use winrt::{RuntimeType, Guid, ComInterface};
 
 #[repr(C)]
 pub struct abi_ICompositorDesktopInterop {
@@ -16,9 +16,8 @@ pub struct abi_ICompositorDesktopInterop {
 }
 
 unsafe impl winrt::ComInterface for CompositorDesktopInterop {
+    const IID: Guid = winrt::Guid::from_values(702976506, 17767, 19914, [179, 25, 208, 242, 7, 235, 104, 7]);
     type VTable = abi_ICompositorDesktopInterop;
-    const GUID: winrt::Guid =
-        winrt::Guid::from_values(702976506, 17767, 19914, [179, 25, 208, 242, 7, 235, 104, 7]);
 }
 
 #[repr(transparent)]
@@ -33,7 +32,7 @@ impl CompositorDesktopInterop {
         hwnd: *mut c_void,
         is_topmost: bool,
     ) -> winrt::Result<DesktopWindowTarget> {
-        let this = self.ptr.get();
+        let this = self.ptr.as_raw();
         if this.is_null() {
             panic!("`this` was null");
         }
